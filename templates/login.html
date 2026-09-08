@@ -1,32 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Student Login</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-    <h1>Student Login</h1>
+    <div class="login-page">
 
-    <form method="POST" action="/login">
+        <div class="login-card">
 
-        Email:
-        <input type="email" name="email" required>
-        <br><br>
+            <div class="login-icon">
+                🚌
+            </div>
 
-        Password:
-        <input type="password" name="password" required>
-        <br><br>
+            <h1>Student Login</h1>
 
-        <input type="submit" value="Login">
+            <p class="login-subtitle">
+                Login to your Bus Pass account
+            </p>
 
-    </form>
+            <form method="POST" action="/login">
 
-    <br>
+                <label>Email Address</label>
+                <input type="email"
+                       name="email"
+                       placeholder="Enter your email"
+                       required>
 
-    <a href="/register">
-        <button>New User? Register</button>
-    </a>
+                <label>Password</label>
+                <input type="password"
+                       name="password"
+                       placeholder="Enter your password"
+                       required>
+
+                <button type="submit" class="login-submit">
+                    Login
+                </button>
+
+            </form>
+
+            <p class="register-text">
+                New User?
+                <a href="/register">Create an account</a>
+            </p>
+
+            <a href="/" class="back-home">
+                ← Back to Home
+            </a>
+
+        </div>
+
+    </div>
 
 </body>
 </html>
