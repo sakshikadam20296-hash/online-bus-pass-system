@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Bus Pass</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: #4b0082;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        .pass-container {
+            width: 90%;
+            max-width: 550px;
+            margin: 50px auto;
+        }
+
+        .pass-card {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.18);
+        }
+
+        .pass-title {
+            background: #4b0082;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .pass-title h2 {
+            margin: 0;
+        }
+
+        .pass-body {
+            padding: 30px;
+        }
+
+        .details {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
+            padding: 14px 0;
+            font-size: 16px;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .value {
+            color: #222;
+            text-align: right;
+        }
+
+        .route {
+            text-align: center;
+            margin: 25px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: #4b0082;
+        }
+
+        .pass-type {
+            text-align: center;
+            background: #f0e6ff;
+            color: #4b0082;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .back-btn {
+            display: block;
+            width: 200px;
+            margin: 25px auto 0;
+            padding: 13px;
+            background: #4b0082;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .back-btn:hover {
+            background: #6a0dad;
+        }
+
+        .footer {
+            text-align: center;
+            color: #777;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>🚌 Online Bus Pass System</h1>
+    </div>
+
+    <div class="pass-container">
+
+        <div class="pass-card">
+
+            <div class="pass-title">
+                <h2>🎫 MY BUS PASS</h2>
+            </div>
+
+            <div class="pass-body">
+
+                <div class="details">
+                    <span class="label">Student Name</span>
+                    <span class="value">{{ pass_data[1] }}</span>
+                </div>
+
+                <div class="details">
+                    <span class="label">College</span>
+                    <span class="value">{{ pass_data[2] }}</span>
+                </div>
+
+                <div class="route">
+                    {{ pass_data[3] }} &nbsp; → &nbsp; {{ pass_data[4] }}
+                </div>
+
+                <div class="details">
+                    <span class="label">Pass Type</span>
+                    <span class="value">{{ pass_data[5] }}</span>
+                </div>
+
+                <div class="details">
+                    <span class="label">Start Date</span>
+                    <span class="value">{{ pass_data[6] }}</span>
+                </div>
+
+                <div class="pass-type">
+                    PASS STATUS: ACTIVE
+                </div>
+
+            </div>
+
+        </div>
+
+        <a href="/dashboard" class="back-btn">
+            ← Back to Dashboard
+        </a>
+
+        <div class="footer">
+            Online Bus Pass System © 2026
+        </div>
+
+    </div>
+
+</body>
+</html>
