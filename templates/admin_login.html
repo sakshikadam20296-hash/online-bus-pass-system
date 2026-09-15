@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Login - Online Bus Pass System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="login-page">
+
+        <div class="login-card">
+
+            <div class="login-icon">
+                🔐
+            </div>
+
+            <h1>Admin Login</h1>
+
+            <p class="login-subtitle">
+                Login to manage the Bus Pass System
+            </p>
+
+            <form method="POST">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter admin username"
+                    required
+                >
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter admin password"
+                    required
+                >
+
+                <button type="submit" class="login-submit">
+                    Admin Login
+                </button>
+
+            </form>
+
+            <p class="login-link">
+                <a href="/">
+                    ← Back to Home
+                </a>
+            </p>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

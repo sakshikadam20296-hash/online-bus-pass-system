@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Bus Pass - Online Bus Pass System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+
+        <div class="logo">
+            🚌 Online Bus Pass
+        </div>
+
+        <nav>
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+        </nav>
+
+    </header>
+
+
+    <section class="my-pass-page">
+
+        <div class="pass-card">
+
+            <div class="pass-icon">
+                🎫
+            </div>
+
+            <h1>My Bus Pass</h1>
+
+            <p class="pass-subtitle">
+                Your Bus Pass Applications
+            </p>
+
+
+            {% if passes %}
+
+                {% for pass in passes %}
+
+                <div class="pass-application">
+
+                    <h2>Bus Pass #{{ pass[0] }}</h2>
+
+                    <div class="pass-details">
+
+                        <div class="detail">
+                            <span>Student Name</span>
+                            <strong>{{ pass[1] }}</strong>
+                        </div>
+
+                        <div class="detail">
+                            <span>College</span>
+                            <strong>{{ pass[2] }}</strong>
+                        </div>
+
+                        <div class="detail">
+                            <span>Source</span>
+                            <strong>{{ pass[3] }}</strong>
+                        </div>
+
+                        <div class="detail">
+                            <span>Destination</span>
+                            <strong>{{ pass[4] }}</strong>
+                        </div>
+
+                        <div class="detail">
+                            <span>Pass Type</span>
+                            <strong>{{ pass[5] }}</strong>
+                        </div>
+
+                        <div class="detail">
+                            <span>Start Date</span>
+                            <strong>{{ pass[6] }}</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="pass-status">
+
+                        <p>Application Status</p>
+
+                        {% if pass[7] == "Approved" %}
+
+                            <div class="user-status approved">
+                                ✅ Approved
+                            </div>
+
+                        {% elif pass[7] == "Rejected" %}
+
+                            <div class="user-status rejected">
+                                ❌ Rejected
+                            </div>
+
+                        {% else %}
+
+                            <div class="user-status pending">
+                                ⏳ Pending
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p>No Bus Pass Applications Found!</p>
+
+            {% endif %}
+
+
+            <a href="/dashboard" class="back-dashboard">
+                ← Back to Dashboard
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+
+        <h3>
+            🚌 Online Bus Pass System
+        </h3>
+
+        <p>
+            Simple • Fast • Convenient
+        </p>
+
+        <p>
+            © 2026 Online Bus Pass System
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

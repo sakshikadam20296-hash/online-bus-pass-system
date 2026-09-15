@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard - Online Bus Pass System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+
+        <div class="logo">
+            🚌 Admin Dashboard
+        </div>
+
+        <nav>
+            <a href="/">Home</a>
+            <a href="/admin-login">Logout</a>
+        </nav>
+
+    </header>
+
+
+    <!-- DASHBOARD -->
+    <section class="admin-dashboard">
+
+        <h1>Admin Dashboard</h1>
+
+        <p class="admin-subtitle">
+            Manage Online Bus Pass System
+        </p>
+
+
+        <!-- STATISTICS -->
+        <div class="admin-stats">
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon">👥</div>
+                <h2>{{ total_users }}</h2>
+                <p>Total Users</p>
+            </div>
+
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon">🎫</div>
+                <h2>{{ total_passes }}</h2>
+                <p>Total Applications</p>
+            </div>
+
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon">⏳</div>
+                <h2>{{ pending_passes }}</h2>
+                <p>Pending</p>
+            </div>
+
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon">✅</div>
+                <h2>{{ approved_passes }}</h2>
+                <p>Approved</p>
+            </div>
+
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-icon">❌</div>
+                <h2>{{ rejected_passes }}</h2>
+                <p>Rejected</p>
+            </div>
+
+        </div>
+
+
+        <!-- REGISTERED USERS -->
+        <div class="admin-section">
+
+            <h2>👥 Registered Users</h2>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for user in users %}
+
+                        <tr>
+                            <td>{{ user[0] }}</td>
+                            <td>{{ user[1] }}</td>
+                            <td>{{ user[2] }}</td>
+                            <td>{{ user[3] }}</td>
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+                            <td colspan="4">
+                                No Users Found
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- BUS PASS APPLICATIONS -->
+        <div class="admin-section">
+
+            <h2>🎫 Bus Pass Applications</h2>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>ID</th>
+                            <th>Student Name</th>
+                            <th>College</th>
+                            <th>Source</th>
+                            <th>Destination</th>
+                            <th>Pass Type</th>
+                            <th>Start Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for bus_pass in passes %}
+
+                        <tr>
+
+                            <td>{{ bus_pass[0] }}</td>
+
+                            <td>{{ bus_pass[1] }}</td>
+
+                            <td>{{ bus_pass[2] }}</td>
+
+                            <td>{{ bus_pass[3] }}</td>
+
+                            <td>{{ bus_pass[4] }}</td>
+
+                            <td>{{ bus_pass[5] }}</td>
+
+                            <td>{{ bus_pass[6] }}</td>
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                {% if bus_pass[7] == "Approved" %}
+
+                                    <span class="status approved">
+                                        ✅ Approved
+                                    </span>
+
+                                {% elif bus_pass[7] == "Rejected" %}
+
+                                    <span class="status rejected">
+                                        ❌ Rejected
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="status pending">
+                                        ⏳ Pending
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ACTION -->
+
+                            <td>
+
+                                {% if bus_pass[7] == "Pending" %}
+
+                                    <a
+                                        href="/approve-pass/{{ bus_pass[0] }}"
+                                        class="approve-btn">
+                                        Approve
+                                    </a>
+
+                                    <a
+                                        href="/reject-pass/{{ bus_pass[0] }}"
+                                        class="reject-btn">
+                                        Reject
+                                    </a>
+
+                                {% else %}
+
+                                    <span class="action-done">
+                                        Completed
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+                            <td colspan="9">
+                                No Bus Pass Applications Found
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <h3>
+            🚌 Online Bus Pass System
+        </h3>
+
+        <p>
+            Admin Panel • Secure Management
+        </p>
+
+        <p>
+            © 2026 Online Bus Pass System
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

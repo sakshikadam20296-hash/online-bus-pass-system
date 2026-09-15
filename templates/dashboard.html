@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: #4b0082;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        h2 {
+            color: #4b0082;
+        }
+
+        p {
+            color: #555;
+            font-size: 18px;
+        }
+
+        .btn {
+            display: inline-block;
+            width: 220px;
+            padding: 14px;
+            margin: 12px;
+            background: #4b0082;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background: #6a0dad;
+        }
+
+        .logout {
+            background: #555;
+        }
+
+        .logout:hover {
+            background: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>🚌 Online Bus Pass System</h1>
+    </div>
+
+    <div class="container">
+
+        <h2>Welcome to Student Dashboard</h2>
+
+        <p>Manage your bus pass easily from here.</p>
+
+        <br>
+
+        <a href="/apply-pass" class="btn">
+            📝 Apply for Bus Pass
+        </a>
+
+        <a href="/my-pass" class="btn">
+            🎫 My Bus Pass
+        </a>
+
+        <a href="/" class="btn logout">
+            🚪 Logout
+        </a>
+
+    </div>
+
+</body>
+</html>
