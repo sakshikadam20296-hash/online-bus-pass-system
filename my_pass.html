@@ -8,7 +8,6 @@
             font-family: Arial, sans-serif;
             background: #f2f4f8;
             margin: 0;
-            padding: 0;
         }
 
         .header {
@@ -38,10 +37,6 @@
             padding: 20px;
         }
 
-        .pass-title h2 {
-            margin: 0;
-        }
-
         .pass-body {
             padding: 30px;
         }
@@ -51,7 +46,6 @@
             justify-content: space-between;
             border-bottom: 1px solid #ddd;
             padding: 14px 0;
-            font-size: 16px;
         }
 
         .label {
@@ -61,7 +55,6 @@
 
         .value {
             color: #222;
-            text-align: right;
         }
 
         .route {
@@ -82,10 +75,30 @@
             margin-top: 20px;
         }
 
+        .button {
+            display: block;
+            width: 220px;
+            margin: 15px auto 0;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+        }
+
+        .clear-btn {
+            background: #6c2bd9;
+        }
+
         .back-btn {
             display: block;
             width: 200px;
-            margin: 25px auto 0;
+            margin: 25px auto;
             padding: 13px;
             background: #4b0082;
             color: white;
@@ -94,14 +107,16 @@
             border-radius: 8px;
         }
 
-        .back-btn:hover {
-            background: #6a0dad;
-        }
-
         .footer {
             text-align: center;
             color: #777;
             margin-top: 30px;
+        }
+
+        .no-pass {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -114,6 +129,8 @@
 
     <div class="pass-container">
 
+        {% if pass_data %}
+
         <div class="pass-card">
 
             <div class="pass-title">
@@ -124,35 +141,83 @@
 
                 <div class="details">
                     <span class="label">Student Name</span>
-                    <span class="value">{{ pass_data[1] }}</span>
+                    <span class="value">{{ pass_data[2] }}</span>
                 </div>
 
                 <div class="details">
                     <span class="label">College</span>
-                    <span class="value">{{ pass_data[2] }}</span>
+                    <span class="value">{{ pass_data[3] }}</span>
                 </div>
 
                 <div class="route">
-                    {{ pass_data[3] }} &nbsp; → &nbsp; {{ pass_data[4] }}
+                    {{ pass_data[4] }} → {{ pass_data[5] }}
                 </div>
 
                 <div class="details">
                     <span class="label">Pass Type</span>
-                    <span class="value">{{ pass_data[5] }}</span>
+                    <span class="value">{{ pass_data[6] }}</span>
                 </div>
 
                 <div class="details">
                     <span class="label">Start Date</span>
-                    <span class="value">{{ pass_data[6] }}</span>
+                    <span class="value">{{ pass_data[7] }}</span>
                 </div>
 
                 <div class="pass-type">
-                    PASS STATUS: ACTIVE
+                    PASS STATUS: {{ pass_data[8] }}
                 </div>
 
+                <form action="{{ url_for('delete_pass', pass_id=pass_data[0]) }}"
+                      method="POST"
+                      onsubmit="return confirm('Are you sure you want to delete this pass?');">
+
+                    <button type="submit" class="button delete-btn">
+                        🗑️ Delete Pass
+                    </button>
+
+                </form>
+
+                <form action="{{ url_for('clear_history') }}"
+                      method="POST"
+                      onsubmit="return confirm('Are you sure you want to clear your complete pass history?');">
+
+                    <button type="submit" class="button clear-btn">
+                        🧹 Clear History
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+
+        {% else %}
+
+        <div class="pass-card">
+
+            <div class="pass-title">
+                <h2>🎫 MY BUS PASS</h2>
             </div>
 
+            <div class="pass-body">
+
+                <h2 class="no-pass">
+                    No Bus Pass Applications Found!
+                </h2>
+
+                <form action="{{ url_for('clear_history') }}"
+                      method="POST"
+                      onsubmit="return confirm('Are you sure you want to clear your complete pass history?');">
+
+                    <button type="submit" class="button clear-btn">
+                        🧹 Clear History
+                    </button>
+
+                </form>
+
+            </div>
         </div>
+
+        {% endif %}
 
         <a href="/dashboard" class="back-btn">
             ← Back to Dashboard

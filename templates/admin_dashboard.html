@@ -9,11 +9,56 @@
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        .user-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .delete-user-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .delete-user-btn:hover {
+            background: #b02a37;
+        }
+
+        .clear-users-container {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .clear-users-btn {
+            background: #6c2bd9;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .clear-users-btn:hover {
+            background: #5420aa;
+        }
+
+    </style>
+
 </head>
 
 <body>
 
     <!-- HEADER -->
+
     <header>
 
         <div class="logo">
@@ -21,17 +66,25 @@
         </div>
 
         <nav>
+
             <a href="/">Home</a>
-            <a href="/admin-login">Logout</a>
+
+            <a href="/admin-login">
+                Logout
+            </a>
+
         </nav>
 
     </header>
 
 
     <!-- DASHBOARD -->
+
     <section class="admin-dashboard">
 
-        <h1>Admin Dashboard</h1>
+        <h1>
+            Admin Dashboard
+        </h1>
 
         <p class="admin-subtitle">
             Manage Online Bus Pass System
@@ -39,80 +92,198 @@
 
 
         <!-- STATISTICS -->
+
         <div class="admin-stats">
 
+
+            <!-- TOTAL USERS -->
+
             <div class="admin-stat-card">
-                <div class="admin-stat-icon">👥</div>
-                <h2>{{ total_users }}</h2>
-                <p>Total Users</p>
+
+                <div class="admin-stat-icon">
+                    👥
+                </div>
+
+                <h2>
+                    {{ total_users }}
+                </h2>
+
+                <p>
+                    Total Users
+                </p>
+
             </div>
 
 
+            <!-- TOTAL APPLICATIONS -->
+
             <div class="admin-stat-card">
-                <div class="admin-stat-icon">🎫</div>
-                <h2>{{ total_passes }}</h2>
-                <p>Total Applications</p>
+
+                <div class="admin-stat-icon">
+                    🎫
+                </div>
+
+                <h2>
+                    {{ total_passes }}
+                </h2>
+
+                <p>
+                    Total Applications
+                </p>
+
             </div>
 
 
+            <!-- PENDING -->
+
             <div class="admin-stat-card">
-                <div class="admin-stat-icon">⏳</div>
-                <h2>{{ pending_passes }}</h2>
-                <p>Pending</p>
+
+                <div class="admin-stat-icon">
+                    ⏳
+                </div>
+
+                <h2>
+                    {{ pending_passes }}
+                </h2>
+
+                <p>
+                    Pending
+                </p>
+
             </div>
 
 
+            <!-- APPROVED -->
+
             <div class="admin-stat-card">
-                <div class="admin-stat-icon">✅</div>
-                <h2>{{ approved_passes }}</h2>
-                <p>Approved</p>
+
+                <div class="admin-stat-icon">
+                    ✅
+                </div>
+
+                <h2>
+                    {{ approved_passes }}
+                </h2>
+
+                <p>
+                    Approved
+                </p>
+
             </div>
 
 
+            <!-- REJECTED -->
+
             <div class="admin-stat-card">
-                <div class="admin-stat-icon">❌</div>
-                <h2>{{ rejected_passes }}</h2>
-                <p>Rejected</p>
+
+                <div class="admin-stat-icon">
+                    ❌
+                </div>
+
+                <h2>
+                    {{ rejected_passes }}
+                </h2>
+
+                <p>
+                    Rejected
+                </p>
+
             </div>
 
         </div>
 
 
         <!-- REGISTERED USERS -->
+
         <div class="admin-section">
 
-            <h2>👥 Registered Users</h2>
+            <h2>
+                👥 Registered Users
+            </h2>
+
 
             <div class="table-container">
 
                 <table>
 
                     <thead>
+
                         <tr>
+
                             <th>ID</th>
+
                             <th>Name</th>
+
                             <th>Email</th>
+
                             <th>Mobile</th>
+
+                            <th>Action</th>
+
                         </tr>
+
                     </thead>
+
 
                     <tbody>
 
                         {% for user in users %}
 
                         <tr>
-                            <td>{{ user[0] }}</td>
-                            <td>{{ user[1] }}</td>
-                            <td>{{ user[2] }}</td>
-                            <td>{{ user[3] }}</td>
+
+                            <td>
+                                {{ user[0] }}
+                            </td>
+
+                            <td>
+                                {{ user[1] }}
+                            </td>
+
+                            <td>
+                                {{ user[2] }}
+                            </td>
+
+                            <td>
+                                {{ user[3] }}
+                            </td>
+
+
+                            <td>
+
+                                <div class="user-actions">
+
+                                    <form
+                                        action="/delete-user/{{ user[0] }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Are you sure you want to delete this user?');">
+
+                                        <button
+                                            type="submit"
+                                            class="delete-user-btn">
+
+                                            🗑️ Delete
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
                         </tr>
+
 
                         {% else %}
 
                         <tr>
-                            <td colspan="4">
+
+                            <td colspan="5">
+
                                 No Users Found
+
                             </td>
+
                         </tr>
 
                         {% endfor %}
@@ -123,13 +294,43 @@
 
             </div>
 
+
+            <!-- CLEAR ALL USERS -->
+
+            {% if users %}
+
+            <div class="clear-users-container">
+
+                <form
+                    action="/clear-users"
+                    method="POST"
+                    onsubmit="return confirm('Are you sure you want to delete ALL registered users and their bus pass history?');">
+
+                    <button
+                        type="submit"
+                        class="clear-users-btn">
+
+                        🧹 Clear Users History
+
+                    </button>
+
+                </form>
+
+            </div>
+
+            {% endif %}
+
         </div>
 
 
         <!-- BUS PASS APPLICATIONS -->
+
         <div class="admin-section">
 
-            <h2>🎫 Bus Pass Applications</h2>
+            <h2>
+                🎫 Bus Pass Applications
+            </h2>
+
 
             <div class="table-container">
 
@@ -138,15 +339,25 @@
                     <thead>
 
                         <tr>
+
                             <th>ID</th>
+
                             <th>Student Name</th>
+
                             <th>College</th>
+
                             <th>Source</th>
+
                             <th>Destination</th>
+
                             <th>Pass Type</th>
+
                             <th>Start Date</th>
+
                             <th>Status</th>
+
                             <th>Action</th>
+
                         </tr>
 
                     </thead>
@@ -158,19 +369,54 @@
 
                         <tr>
 
-                            <td>{{ bus_pass[0] }}</td>
 
-                            <td>{{ bus_pass[1] }}</td>
+                            <!-- ID -->
 
-                            <td>{{ bus_pass[2] }}</td>
+                            <td>
+                                {{ bus_pass[0] }}
+                            </td>
 
-                            <td>{{ bus_pass[3] }}</td>
 
-                            <td>{{ bus_pass[4] }}</td>
+                            <!-- STUDENT NAME -->
 
-                            <td>{{ bus_pass[5] }}</td>
+                            <td>
+                                {{ bus_pass[1] }}
+                            </td>
 
-                            <td>{{ bus_pass[6] }}</td>
+
+                            <!-- COLLEGE -->
+
+                            <td>
+                                {{ bus_pass[2] }}
+                            </td>
+
+
+                            <!-- SOURCE -->
+
+                            <td>
+                                {{ bus_pass[3] }}
+                            </td>
+
+
+                            <!-- DESTINATION -->
+
+                            <td>
+                                {{ bus_pass[4] }}
+                            </td>
+
+
+                            <!-- PASS TYPE -->
+
+                            <td>
+                                {{ bus_pass[5] }}
+                            </td>
+
+
+                            <!-- START DATE -->
+
+                            <td>
+                                {{ bus_pass[6] }}
+                            </td>
 
 
                             <!-- STATUS -->
@@ -180,19 +426,27 @@
                                 {% if bus_pass[7] == "Approved" %}
 
                                     <span class="status approved">
+
                                         ✅ Approved
+
                                     </span>
+
 
                                 {% elif bus_pass[7] == "Rejected" %}
 
                                     <span class="status rejected">
+
                                         ❌ Rejected
+
                                     </span>
+
 
                                 {% else %}
 
                                     <span class="status pending">
+
                                         ⏳ Pending
+
                                     </span>
 
                                 {% endif %}
@@ -206,23 +460,34 @@
 
                                 {% if bus_pass[7] == "Pending" %}
 
+
                                     <a
                                         href="/approve-pass/{{ bus_pass[0] }}"
                                         class="approve-btn">
+
                                         Approve
+
                                     </a>
+
 
                                     <a
                                         href="/reject-pass/{{ bus_pass[0] }}"
                                         class="reject-btn">
+
                                         Reject
+
                                     </a>
+
 
                                 {% else %}
 
+
                                     <span class="action-done">
+
                                         Completed
+
                                     </span>
+
 
                                 {% endif %}
 
@@ -230,12 +495,17 @@
 
                         </tr>
 
+
                         {% else %}
 
                         <tr>
+
                             <td colspan="9">
+
                                 No Bus Pass Applications Found
+
                             </td>
+
                         </tr>
 
                         {% endfor %}
@@ -256,15 +526,23 @@
     <footer>
 
         <h3>
+
             🚌 Online Bus Pass System
+
         </h3>
 
-        <p>
-            Admin Panel • Secure Management
-        </p>
 
         <p>
+
+            Admin Panel • Secure Management
+
+        </p>
+
+
+        <p>
+
             © 2026 Online Bus Pass System
+
         </p>
 
     </footer>

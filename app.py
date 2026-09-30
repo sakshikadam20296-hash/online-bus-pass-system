@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 import sqlite3
 
 app = Flask(__name__)
+
+app.secret_key = "online_bus_pass_secret"
 
 
 # =========================
@@ -13,7 +15,10 @@ def create_table():
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
 
-    # Users table
+    # =========================
+    # USERS TABLE
+    # =========================
+
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,7 +29,11 @@ def create_table():
         )
     """)
 
-    # Bus Pass table
+
+    # =========================
+    # BUS PASS TABLE
+    # =========================
+
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS bus_pass (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,11 +43,16 @@ def create_table():
             destination TEXT NOT NULL,
             pass_type TEXT NOT NULL,
             start_date TEXT NOT NULL,
-            status TEXT DEFAULT 'Pending'
+            status TEXT DEFAULT 'Pending',
+            user_id INTEGER
         )
     """)
 
-    # Admin table
+
+    # =========================
+    # ADMIN TABLE
+    # =========================
+
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS admins (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,15 +61,9 @@ def create_table():
         )
     """)
 
-    # Add status column if old database does not have it
-    try:
-        cursor.execute(
-            "ALTER TABLE bus_pass ADD COLUMN status TEXT DEFAULT 'Pending'"
-        )
-    except sqlite3.OperationalError:
-        pass
 
-    # Default Admin
+    # Create default admin
+
     cursor.execute(
         "SELECT * FROM admins WHERE username = ?",
         ("admin",)
@@ -64,10 +72,13 @@ def create_table():
     admin = cursor.fetchone()
 
     if not admin:
+
         cursor.execute("""
-            INSERT INTO admins (username, password)
+            INSERT INTO admins
+            (username, password)
             VALUES (?, ?)
         """, ("admin", "admin123"))
+
 
     conn.commit()
     conn.close()
@@ -79,6 +90,7 @@ def create_table():
 
 @app.route("/")
 def home():
+
     return render_template("index.html")
 
 
@@ -96,19 +108,29 @@ def register():
         mobile = request.form["mobile"]
         password = request.form["password"]
 
+
         conn = sqlite3.connect("database.db")
         cursor = conn.cursor()
+
 
         cursor.execute("""
             INSERT INTO users
             (name, email, mobile, password)
             VALUES (?, ?, ?, ?)
-        """, (name, email, mobile, password))
+        """, (
+            name,
+            email,
+            mobile,
+            password
+        ))
+
 
         conn.commit()
         conn.close()
 
+
         return render_template("success.html")
+
 
     return render_template("register.html")
 
@@ -125,33 +147,58 @@ def login():
         email = request.form["email"]
         password = request.form["password"]
 
+
         conn = sqlite3.connect("database.db")
         cursor = conn.cursor()
 
+
         cursor.execute("""
-            SELECT * FROM users
-            WHERE email = ? AND password = ?
-        """, (email, password))
+            SELECT *
+            FROM users
+            WHERE email = ?
+            AND password = ?
+        """, (
+            email,
+            password
+        ))
+
 
         user = cursor.fetchone()
 
         conn.close()
 
+
         if user:
-            return render_template("dashboard.html")
+
+            session["user_id"] = user[0]
+            session["user_name"] = user[1]
+
+            return render_template(
+                "dashboard.html"
+            )
+
 
         return "Invalid Email or Password!"
+
 
     return render_template("login.html")
 
 
 # =========================
-# USER DASHBOARD
+# DASHBOARD
 # =========================
 
 @app.route("/dashboard")
 def dashboard():
-    return render_template("dashboard.html")
+
+    if "user_id" not in session:
+
+        return redirect("/login")
+
+
+    return render_template(
+        "dashboard.html"
+    )
 
 
 # =========================
@@ -160,6 +207,11 @@ def dashboard():
 
 @app.route("/apply-pass", methods=["GET", "POST"])
 def apply_pass():
+
+    if "user_id" not in session:
+
+        return redirect("/login")
+
 
     if request.method == "POST":
 
@@ -170,8 +222,12 @@ def apply_pass():
         pass_type = request.form["pass_type"]
         start_date = request.form["start_date"]
 
+        user_id = session["user_id"]
+
+
         conn = sqlite3.connect("database.db")
         cursor = conn.cursor()
+
 
         cursor.execute("""
             INSERT INTO bus_pass
@@ -182,9 +238,10 @@ def apply_pass():
                 destination,
                 pass_type,
                 start_date,
-                status
+                status,
+                user_id
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             student_name,
             college,
@@ -192,15 +249,23 @@ def apply_pass():
             destination,
             pass_type,
             start_date,
-            "Pending"
+            "Pending",
+            user_id
         ))
+
 
         conn.commit()
         conn.close()
 
-        return render_template("success.html")
 
-    return render_template("apply_pass.html")
+        return render_template(
+            "success.html"
+        )
+
+
+    return render_template(
+        "apply_pass.html"
+    )
 
 
 # =========================
@@ -208,31 +273,122 @@ def apply_pass():
 # =========================
 
 @app.route("/my-pass")
-@app.route("/my-pass")
 def my_pass():
+
+    if "user_id" not in session:
+
+        return redirect("/login")
+
+
+    user_id = session["user_id"]
+
 
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
 
+
     cursor.execute("""
         SELECT *
         FROM bus_pass
+        WHERE user_id = ?
         ORDER BY id DESC
-    """)
+        LIMIT 1
+    """, (user_id,))
 
-    passes = cursor.fetchall()
+
+    pass_data = cursor.fetchone()
 
     conn.close()
 
+
     return render_template(
-        "my_pass.html",
-        passes=passes
+        "pass_page.html",
+        pass_data=pass_data
     )
+
+
+# =========================
+# DELETE MY PASS
+# =========================
+
+@app.route(
+    "/delete-pass/<int:pass_id>",
+    methods=["POST"]
+)
+def delete_pass(pass_id):
+
+    if "user_id" not in session:
+
+        return redirect("/login")
+
+
+    user_id = session["user_id"]
+
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+
+    cursor.execute("""
+        DELETE FROM bus_pass
+        WHERE id = ?
+        AND user_id = ?
+    """, (
+        pass_id,
+        user_id
+    ))
+
+
+    conn.commit()
+    conn.close()
+
+
+    return redirect("/my-pass")
+
+
+# =========================
+# CLEAR MY HISTORY
+# =========================
+
+@app.route(
+    "/clear-history",
+    methods=["POST"]
+)
+def clear_history():
+
+    if "user_id" not in session:
+
+        return redirect("/login")
+
+
+    user_id = session["user_id"]
+
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+
+    cursor.execute("""
+        DELETE FROM bus_pass
+        WHERE user_id = ?
+    """, (user_id,))
+
+
+    conn.commit()
+    conn.close()
+
+
+    return redirect("/my-pass")
+
+
 # =========================
 # ADMIN LOGIN
 # =========================
 
-@app.route("/admin-login", methods=["GET", "POST"])
+@app.route(
+    "/admin-login",
+    methods=["GET", "POST"]
+)
 def admin_login():
 
     if request.method == "POST":
@@ -240,25 +396,40 @@ def admin_login():
         username = request.form["username"]
         password = request.form["password"]
 
+
         conn = sqlite3.connect("database.db")
         cursor = conn.cursor()
+
 
         cursor.execute("""
             SELECT *
             FROM admins
-            WHERE username = ? AND password = ?
-        """, (username, password))
+            WHERE username = ?
+            AND password = ?
+        """, (
+            username,
+            password
+        ))
+
 
         admin = cursor.fetchone()
 
         conn.close()
 
+
         if admin:
-            return redirect("/admin-dashboard")
+
+            return redirect(
+                "/admin-dashboard"
+            )
+
 
         return "Invalid Admin Username or Password!"
 
-    return render_template("admin_login.html")
+
+    return render_template(
+        "admin_login.html"
+    )
 
 
 # =========================
@@ -271,65 +442,195 @@ def admin_dashboard():
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
 
+
     # Total Users
-    cursor.execute("SELECT COUNT(*) FROM users")
+
+    cursor.execute(
+        "SELECT COUNT(*) FROM users"
+    )
+
     total_users = cursor.fetchone()[0]
 
+
     # Total Passes
-    cursor.execute("SELECT COUNT(*) FROM bus_pass")
+
+    cursor.execute(
+        "SELECT COUNT(*) FROM bus_pass"
+    )
+
     total_passes = cursor.fetchone()[0]
 
-    # Pending Passes
+
+    # Pending
+
     cursor.execute("""
         SELECT COUNT(*)
         FROM bus_pass
         WHERE status = 'Pending'
     """)
+
     pending_passes = cursor.fetchone()[0]
 
-    # Approved Passes
+
+    # Approved
+
     cursor.execute("""
         SELECT COUNT(*)
         FROM bus_pass
         WHERE status = 'Approved'
     """)
+
     approved_passes = cursor.fetchone()[0]
 
-    # Rejected Passes
+
+    # Rejected
+
     cursor.execute("""
         SELECT COUNT(*)
         FROM bus_pass
         WHERE status = 'Rejected'
     """)
+
     rejected_passes = cursor.fetchone()[0]
 
+
     # Users
+
     cursor.execute("""
-        SELECT id, name, email, mobile
+        SELECT
+            id,
+            name,
+            email,
+            mobile
         FROM users
         ORDER BY id DESC
     """)
+
     users = cursor.fetchall()
 
+
     # Bus Pass Applications
+
     cursor.execute("""
         SELECT *
         FROM bus_pass
         ORDER BY id DESC
     """)
+
     passes = cursor.fetchall()
+
 
     conn.close()
 
+
     return render_template(
         "admin_dashboard.html",
+
         total_users=total_users,
+
         total_passes=total_passes,
+
         pending_passes=pending_passes,
+
         approved_passes=approved_passes,
+
         rejected_passes=rejected_passes,
+
         users=users,
+
         passes=passes
+    )
+
+
+# =========================
+# DELETE USER
+# =========================
+
+@app.route(
+    "/delete-user/<int:user_id>",
+    methods=["POST"]
+)
+def delete_user(user_id):
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+
+    # Delete user's bus passes
+
+    cursor.execute("""
+        DELETE FROM bus_pass
+        WHERE user_id = ?
+    """, (user_id,))
+
+
+    # Delete user
+
+    cursor.execute("""
+        DELETE FROM users
+        WHERE id = ?
+    """, (user_id,))
+
+
+    conn.commit()
+    conn.close()
+
+
+    return redirect(
+        "/admin-dashboard"
+    )
+
+
+# =========================
+# CLEAR ALL USERS HISTORY
+# =========================
+
+@app.route(
+    "/clear-users",
+    methods=["POST"]
+)
+def clear_users():
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+
+    # Delete all bus passes
+
+    cursor.execute("""
+        DELETE FROM bus_pass
+    """)
+
+
+    # Delete all users
+
+    cursor.execute("""
+        DELETE FROM users
+    """)
+
+
+    # Reset Users ID
+
+    cursor.execute("""
+        DELETE FROM sqlite_sequence
+        WHERE name = 'users'
+    """)
+
+
+    # Reset Bus Pass ID
+
+    cursor.execute("""
+        DELETE FROM sqlite_sequence
+        WHERE name = 'bus_pass'
+    """)
+
+
+    conn.commit()
+    conn.close()
+
+
+    return redirect(
+        "/admin-dashboard"
     )
 
 
@@ -337,11 +638,14 @@ def admin_dashboard():
 # APPROVE BUS PASS
 # =========================
 
-@app.route("/approve-pass/<int:pass_id>")
+@app.route(
+    "/approve-pass/<int:pass_id>"
+)
 def approve_pass(pass_id):
 
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
+
 
     cursor.execute("""
         UPDATE bus_pass
@@ -349,21 +653,28 @@ def approve_pass(pass_id):
         WHERE id = ?
     """, (pass_id,))
 
+
     conn.commit()
     conn.close()
 
-    return redirect("/admin-dashboard")
+
+    return redirect(
+        "/admin-dashboard"
+    )
 
 
 # =========================
 # REJECT BUS PASS
 # =========================
 
-@app.route("/reject-pass/<int:pass_id>")
+@app.route(
+    "/reject-pass/<int:pass_id>"
+)
 def reject_pass(pass_id):
 
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
+
 
     cursor.execute("""
         UPDATE bus_pass
@@ -371,17 +682,41 @@ def reject_pass(pass_id):
         WHERE id = ?
     """, (pass_id,))
 
+
     conn.commit()
     conn.close()
 
-    return redirect("/admin-dashboard")
+
+    return redirect(
+        "/admin-dashboard"
+    )
+
+
+# =========================
+# LOGOUT
+# =========================
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    return redirect("/")
+
+
+# =========================
+# CREATE DATABASE
+# =========================
+
+create_table()
 
 
 # =========================
 # RUN APPLICATION
 # =========================
 
-create_table()
-
 if __name__ == "__main__":
-    app.run(debug=True)
+
+    app.run(
+        debug=True
+    )

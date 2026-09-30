@@ -1,152 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bus Pass</title>
 
-    <title>My Bus Pass - Online Bus Pass System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f8;
+            margin: 0;
+        }
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
-</head>
+        .header {
+            background: #4b0082;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
 
-<body>
+        .pass-container {
+            width: 90%;
+            max-width: 550px;
+            margin: 50px auto;
+        }
 
-    <header>
+        .pass-card {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.18);
+        }
 
-        <div class="logo">
-            🚌 Online Bus Pass
-        </div>
+        .pass-title {
+            background: #4b0082;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
 
-        <nav>
-            <a href="/">Home</a>
-            <a href="/dashboard">Dashboard</a>
-        </nav>
+        .pass-body {
+            padding: 30px;
+        }
 
-    </header>
+        .details {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
+            padding: 14px 0;
+        }
 
+        .label {
+            font-weight: bold;
+            color: #555;
+        }
 
-    <section class="my-pass-page">
+        .value {
+            color: #222;
+        }
 
-        <div class="pass-card">
+        .route {
+            text-align: center;
+            margin: 25px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: #4b0082;
+        }
 
-            <div class="pass-icon">
-                🎫
-            </div>
+        .pass-type {
+            text-align: center;
+            background: #f0e6ff;
+            color: #4b0082;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
 
-            <h1>My Bus Pass</h1>
+        .button {
+            display: block;
+            width: 220px;
+            margin: 15px auto 0;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
 
-            <p class="pass-subtitle">
-                Your Bus Pass Applications
-            </p>
+        .delete-btn {
+            background: #dc3545;
+        }
 
+        .clear-btn {
+            background: #6c2bd9;
+        }
 
-            {% if passes %}
+        .back-btn {
+            display: block;
+            width: 200px;
+            margin: 25px auto;
+            padding: 13px;
+            background: #4b0082;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 8px;
+        }
 
-                {% for pass in passes %}
+        .footer {
+            text-align: center;
+            color: #777;
+            margin-top: 30px;
+        }
 
-                <div class="pass-application">
-
-                    <h2>Bus Pass #{{ pass[0] }}</h2>
-
-                    <div class="pass-details">
-
-                        <div class="detail">
-                            <span>Student Name</span>
-                            <strong>{{ pass[1] }}</strong>
-                        </div>
-
-                        <div class="detail">
-                            <span>College</span>
-                            <strong>{{ pass[2] }}</strong>
-                        </div>
-
-                        <div class="detail">
-                            <span>Source</span>
-                            <strong>{{ pass[3] }}</strong>
-                        </div>
-
-                        <div class="detail">
-                            <span>Destination</span>
-                            <strong>{{ pass[4] }}</strong>
-                        </div>
-
-                        <div class="detail">
-                            <span>Pass Type</span>
-                            <strong>{{ pass[5] }}</strong>
-                        </div>
-
-                        <div class="detail">
-                            <span>Start Date</span>
-                            <strong>{{ pass[6] }}</strong>
-                        </div>
-
-                    </div>
-
-
-                    <div class="pass-status">
-
-                        <p>Application Status</p>
-
-                        {% if pass[7] == "Approved" %}
-
-                            <div class="user-status approved">
-                                ✅ Approved
-                            </div>
-
-                        {% elif pass[7] == "Rejected" %}
-
-                            <div class="user-status rejected">
-                                ❌ Rejected
-                            </div>
-
-                        {% else %}
-
-                            <div class="user-status pending">
-                                ⏳ Pending
-                            </div>
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-                {% endfor %}
-
-            {% else %}
-
-                <p>No Bus Pass Applications Found!</p>
-
-            {% endif %}
-
-
-            <a href="/dashboard" class="back-dashboard">
-                ← Back to Dashboard
-            </a>
-
-        </div>
-
-    </section>
-
-
-    <footer>
-
-        <h3>
-            🚌 Online Bus Pass System
-        </h3>
-
-        <p>
-            Simple • Fast • Convenient
-        </p>
-
-        <p>
-            © 2026 Online Bus Pass System
-        </p>
-
-    </footer>
-
-</body>
-
-</html>
+        .no-pass {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
+        }
+    </style>
+</
